@@ -7,7 +7,7 @@ A VERY simple Magento environment provisioner for [Vagrant](http://www.vagrantup
 
 * Creates a running Magento development environment with a few simple commands.
 * Runs on Ubuntu (Trusty 14.04 64 Bit) \w PHP 5.5, MySQL 5.5, Apache 2.2
-* Uses [Magento CE 1.9.1.0](http://www.magentocommerce.com/download)
+* Uses [Magento CE 1.9.1.1](http://www.magentocommerce.com/download)
 * Automatically runs Magento's installer and creates CMS admin account.
 * Optionally installs Magento Sample Store Inventory
 * Automatically runs [n98-magerun](https://github.com/netz98/n98-magerun) installer.
