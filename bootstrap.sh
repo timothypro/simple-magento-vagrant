@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 SAMPLE_DATA=$1
-MAGE_VERSION="1.9.1.0"
+MAGE_VERSION="1.9.1.1"
 DATA_VERSION="1.9.0.0"
 
 # Update Apt
@@ -20,8 +20,8 @@ php5enmod mcrypt
 # Delete default apache web dir and symlink mounted vagrant dir from host machine
 # --------------------
 rm -rf /var/www/html
-mkdir /vagrant/httpdocs
-ln -fs /vagrant/httpdocs /var/www/html
+mkdir /vagrant/htdocs
+ln -fs /vagrant/htdocs /var/www/html
 
 # Replace contents of default Apache vhost
 # --------------------
@@ -67,8 +67,8 @@ mysql -u root -e "FLUSH PRIVILEGES"
 # http://www.magentocommerce.com/wiki/1_-_installation_and_configuration/installing_magento_via_shell_ssh
 
 # Download and extract
-if [[ ! -f "/vagrant/httpdocs/index.php" ]]; then
-  cd /vagrant/httpdocs
+if [[ ! -f "/vagrant/htdocs/index.php" ]]; then
+  cd /vagrant/htdocs
   wget http://www.magentocommerce.com/downloads/assets/${MAGE_VERSION}/magento-${MAGE_VERSION}.tar.gz
   tar -zxvf magento-${MAGE_VERSION}.tar.gz
   mv magento/* magento/.htaccess .
@@ -89,30 +89,30 @@ if [[ $SAMPLE_DATA == "true" ]]; then
   fi
 
   tar -zxvf magento-sample-data-${DATA_VERSION}.tar.gz
-  cp -R magento-sample-data-${DATA_VERSION}/media/* httpdocs/media/
-  cp -R magento-sample-data-${DATA_VERSION}/skin/*  httpdocs/skin/
+  cp -R magento-sample-data-${DATA_VERSION}/media/* htdocs/media/
+  cp -R magento-sample-data-${DATA_VERSION}/skin/*  htdocs/skin/
   mysql -u root magentodb < magento-sample-data-${DATA_VERSION}/magento_sample_data_for_${DATA_VERSION}.sql
   rm -rf magento-sample-data-${DATA_VERSION}
 fi
 
 
 # Run installer
-if [ ! -f "/vagrant/httpdocs/app/etc/local.xml" ]; then
-  cd /vagrant/httpdocs
+if [ ! -f "/vagrant/htdocs/app/etc/local.xml" ]; then
+  cd /vagrant/htdocs
   sudo /usr/bin/php -f install.php -- --license_agreement_accepted yes \
   --locale en_US --timezone "America/Los_Angeles" --default_currency USD \
-  --db_host localhost --db_name magentodb --db_user magentouser --db_pass password \
+  --db_host localhost --db_name magentodb --db_user root --db_pass root \
   --url "http://127.0.0.1:8080/" --use_rewrites yes \
   --use_secure no --secure_base_url "http://127.0.0.1:8080/" --use_secure_admin no \
   --skip_url_validation yes \
   --admin_lastname Owner --admin_firstname Store --admin_email "admin@example.com" \
-  --admin_username admin --admin_password password123123
+  --admin_username admin --admin_password password123
   /usr/bin/php -f shell/indexer.php reindexall
 fi
 
 # Install n98-magerun
 # --------------------
-cd /vagrant/httpdocs
+cd /vagrant/htdocs
 wget https://raw.github.com/netz98/n98-magerun/master/n98-magerun.phar
 chmod +x ./n98-magerun.phar
 sudo mv ./n98-magerun.phar /usr/local/bin/
